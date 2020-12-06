@@ -12,7 +12,13 @@ def findTwoNumbersThatSumTo(target, input):
     secondNumber.add(target - num)
 
 def findThreeNumbersThatSumTo(target, input):
-  return 2, 3, 4
+  for i in range(len(input)):
+    element = input[i]
+    modified_target = target - element
+    modified_input = input[:i] + input[i+1:]
+    answer = findTwoNumbersThatSumTo(modified_target, modified_input)
+    if (answer is not None):
+      return answer[0], answer[1], element
 
 def calculateAnswer(*numbers):
   product = 1
