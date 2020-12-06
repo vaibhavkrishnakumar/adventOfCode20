@@ -11,15 +11,31 @@ def findTwoNumbersThatSumTo(target, input):
       return num, target - num
     secondNumber.add(target - num)
 
-def calculateAnswer(num1, num2):
-  return num1*num2
+def findThreeNumbersThatSumTo(target, input):
+  return 2, 3, 4
+
+def calculateAnswer(*numbers):
+  product = 1
+  for number in numbers:
+    product *= number
+  return product
+
+def part1(input, target):
+  x, y = findTwoNumbersThatSumTo(target, input)
+  print("The two numbers that sum to {} are {} and {}".format(target, x, y))
+  return calculateAnswer(x, y)
+
+def part2(input, target):
+  x, y, z = findThreeNumbersThatSumTo(target, input)
+  print("The three numbers that sum to {} are {}, {} and {}".format(target, x, y, z))
+  return calculateAnswer(x, y, z)
 
 def main(filename, target):
   input = readInputAsNumbers(filename)
-  x, y = findTwoNumbersThatSumTo(target, input)
-  print("Numbers that sum to {} are {} and {}".format(target, x, y))
-  answer = calculateAnswer(x, y)
-  print("Answer is {}".format(answer))
+  answer = part1(input, target)
+  print("Answer to Part 1 is {}\n".format(answer))
+  answer = part2(input, target)
+  print("Answer to Part 2 is {}".format(answer))
 
 filename = "input.txt"
 target = 2020
