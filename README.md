@@ -1,1 +1,1 @@
-# adventOfCode20
+# Advent Of Code 2020See https://adventofcode.com/2020 for detailsIn addition to solving the daily problems, my aim is to* Try a different language and/or framework for each problem* Ensure the code is production ready, with at least some testing
