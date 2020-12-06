@@ -5,43 +5,57 @@ def readInputAsNumbers(filename):
   return out
 
 def findTwoNumbersThatSumTo(target, input):
-  secondNumber = set()
+  augends = set()
   for num in input:
-    if (num in secondNumber):
+    if (num in augends):
       return num, target - num
-    secondNumber.add(target - num)
+    augends.add(target - num)
 
 def findThreeNumbersThatSumTo(target, input):
   for i in range(len(input)):
-    element = input[i]
-    modified_target = target - element
-    modified_input = input[:i] + input[i+1:]
+    modified_target = target - input[i]
+    modified_input = listWithoutElementAtIndex(input, i)
     answer = findTwoNumbersThatSumTo(modified_target, modified_input)
     if (answer is not None):
-      return answer[0], answer[1], element
+      return answer[0], answer[1], input[i]
 
-def calculateAnswer(*numbers):
+def listWithoutElementAtIndex(list, index):
+  return list[:index] + list[index + 1:]
+
+def calculateFinalAnswer(*numbers):
   product = 1
   for number in numbers:
     product *= number
   return product
 
 def part1(input, target):
-  x, y = findTwoNumbersThatSumTo(target, input)
-  print("The two numbers that sum to {} are {} and {}".format(target, x, y))
-  return calculateAnswer(x, y)
+  twoNumbers = findTwoNumbersThatSumTo(target, input)
+  if (twoNumbers is not None):
+    x, y = twoNumbers
+    print("The two numbers that sum to {} are {} and {}".format(target, x, y))
+    return calculateFinalAnswer(x, y)
+  else:
+    print("No two numbers sum to {}".format(target))
 
 def part2(input, target):
-  x, y, z = findThreeNumbersThatSumTo(target, input)
-  print("The three numbers that sum to {} are {}, {} and {}".format(target, x, y, z))
-  return calculateAnswer(x, y, z)
+  threeNumbers = findThreeNumbersThatSumTo(target, input)
+  if (threeNumbers is not None):
+    x, y, z = threeNumbers
+    print("The three numbers that sum to {} are {}, {} and {}".format(target, x, y, z))
+    return calculateFinalAnswer(x, y, z)
+  else:
+    print("No three numbers sum to {}".format(target))
 
 def main(filename, target):
   input = readInputAsNumbers(filename)
+
   answer = part1(input, target)
-  print("Answer to Part 1 is {}\n".format(answer))
+  if (answer is not None):
+    print("Answer to Part 1 is {}\n".format(answer))
+
   answer = part2(input, target)
-  print("Answer to Part 2 is {}".format(answer))
+  if (answer is not None):
+    print("Answer to Part 2 is {}\n".format(answer))
 
 filename = "input.txt"
 target = 2020
