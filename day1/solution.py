@@ -4,20 +4,23 @@ def readInputAsNumbers(filename):
   input_file.close()
   return out
 
+def findNumbersThatSumTo(target, input, n):
+  if (n == 1):
+    if target in input:
+      return [target]
+  else:
+    for i in range(len(input)):
+      modified_target = target - input[i]
+      modified_input = listWithoutElementAtIndex(input, i)
+      augend = findNumbersThatSumTo(modified_target, modified_input, n-1)
+      if augend:
+          return augend + [input[i]]
+
 def findTwoNumbersThatSumTo(target, input):
-  augends = set()
-  for num in input:
-    if (num in augends):
-      return num, target - num
-    augends.add(target - num)
+  return findNumbersThatSumTo(target, input, 2)
 
 def findThreeNumbersThatSumTo(target, input):
-  for i in range(len(input)):
-    modified_target = target - input[i]
-    modified_input = listWithoutElementAtIndex(input, i)
-    answer = findTwoNumbersThatSumTo(modified_target, modified_input)
-    if (answer is not None):
-      return answer[0], answer[1], input[i]
+  return findNumbersThatSumTo(target, input, 3)
 
 def listWithoutElementAtIndex(list, index):
   return list[:index] + list[index + 1:]
@@ -30,7 +33,7 @@ def calculateFinalAnswer(*numbers):
 
 def part1(input, target):
   twoNumbers = findTwoNumbersThatSumTo(target, input)
-  if (twoNumbers is not None):
+  if twoNumbers:
     x, y = twoNumbers
     print("The two numbers that sum to {} are {} and {}".format(target, x, y))
     return calculateFinalAnswer(x, y)
@@ -39,7 +42,7 @@ def part1(input, target):
 
 def part2(input, target):
   threeNumbers = findThreeNumbersThatSumTo(target, input)
-  if (threeNumbers is not None):
+  if threeNumbers:
     x, y, z = threeNumbers
     print("The three numbers that sum to {} are {}, {} and {}".format(target, x, y, z))
     return calculateFinalAnswer(x, y, z)
@@ -50,11 +53,10 @@ def main(filename, target):
   input = readInputAsNumbers(filename)
 
   answer = part1(input, target)
-  if (answer is not None):
+  if answer:
     print("Answer to Part 1 is {}\n".format(answer))
-
   answer = part2(input, target)
-  if (answer is not None):
+  if answer:
     print("Answer to Part 2 is {}\n".format(answer))
 
 filename = "input.txt"
