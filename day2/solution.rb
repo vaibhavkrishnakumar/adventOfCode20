@@ -25,7 +25,7 @@ class InputRow
 end
 
 # Line is of the form "range character: password"
-def splitLine(line)
+def split_line(line)
   arr = line.split
   character, _ = arr[1].split(':')
   InputRow.new(arr[0], character, arr[2])
@@ -36,7 +36,7 @@ number_of_valid_passwords_part_one = 0
 number_of_valid_passwords_part_two = 0
 
 File.foreach(filename) do |line|
-  input_row = splitLine(line)
+  input_row = split_line(line)
 
   if input_row.is_valid_part_one
     number_of_valid_passwords_part_one += 1
