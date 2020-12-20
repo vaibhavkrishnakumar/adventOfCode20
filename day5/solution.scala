@@ -5,41 +5,34 @@ object Solution {
   val filename = "input.txt";
 
   def main(args: Array[String]) : Unit = {
-    Source.fromFile(filename).getLines().foreach { x => println(x) };
-  }
-}
-
-class Passport(
-    var byr: Option[String],
-    var iyr: Option[String],
-    var eyr: Option[String],
-    var hgt: Option[String],
-    var hcl: Option[String],
-    var ecl: Option[String],
-    var pid: Option[String],
-    var cid: Option[String]
-    ) {
-
-  def isValid() : bool = {
-    // cid doesn't have to be present for validity
-    allAreDefined(byr, iyr, eyr, hgt, hcl, ecl, pid)
+    val maxSeatId : Int = Source.fromFile(filename).getLines()
+      .map(toRowAndColumn)
+      .map(toNumbers)
+      .map(toSeatId)
+      .max;
+    println(s"Answer to Part 1 is $maxSeatId");
   }
 
-  // XXX Should be a util method
-  private def allAreDefined(options: Option*) {
-    return options.stream().allMatch(Option::isDefined)
+  private def toRowAndColumn(line: String) : (String, String) = {
+    val isRowDescriptor = (char : Char) => 'F' == char || 'B' == char;
+    line.span(isRowDescriptor);
   }
 
-}
+  private def toNumbers(rowColumnDescriptors: (String, String)) : (Int, Int) = {
+    val (rowDesc, columnDesc) = rowColumnDescriptors;
+    val row = toNumber(rowDesc, 'F', 'B');
+    val column = toNumber(columnDesc, 'L', 'R');
+    (row, column);
+  }
 
-object Passport {
-  def create(passport: String) : Passport = {
-    var fields = passport.split("\r\n ").map(str -> {
-        keyValue = str.split(":");
-        (keyValue[0], keyValue[1]);
-        })
+  private def toNumber(strDescriptor: String, zeroRep:Char, oneRep: Char) : Int = {
+    val zeroOneStr = strDescriptor.replace(zeroRep, '0').replace(oneRep, '1');
+    Integer.parseInt(zeroOneStr, 2);
+  }
 
-    return new Passport(map.get("byr"));
+  private def toSeatId(rowAndColumn: (Int, Int)) : Int = {
+    val (row, column) = rowAndColumn;
+    row*8 + column;
   }
 }
 

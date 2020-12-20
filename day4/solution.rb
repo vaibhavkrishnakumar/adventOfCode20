@@ -71,7 +71,7 @@ class Passport
 end
 
 def to_passport(line)
-  entries = line.strip.split(" ")
+  entries = line.strip.split
   fields = Hash[entries.map { |x| x.split(":") }]
   Passport.new(fields)
 end
