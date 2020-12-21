@@ -1,1 +1,1 @@
-# Advent Of Code 2020See https://adventofcode.com/2020 for detailsMy aim is to try a different language and/or framework for each daily problem
+# Advent Of Code 2020See https://adventofcode.com/2020 for detailsMy aim is to try as many different languages and/or frameworks as possible
