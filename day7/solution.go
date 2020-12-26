@@ -6,6 +6,7 @@ import (
     "os"
     "strings"
     "regexp"
+    "strconv"
     )
 
 func main() {
@@ -15,50 +16,110 @@ filename := "test.txt"
             defer file.Close()
 
             scanner := bufio.NewScanner(file)
+            bags := make([]bag, 0)
             for scanner.Scan() {
-bag := LineToBag(scanner.Text())
-       fmt.Println(bag)
-       fmt.Println("-")
+              bags = append(bags, LineToBag(scanner.Text()))
             }
 
+shinyGoldCarriers := NumCarriers(bags, "shiny gold")
+                     fmt.Println("Answer to Part 1 is " + strconv.Itoa(shinyGoldCarriers))
 }
 
 func LineToBag(line string) bag {
-out := strings.SplitN(line, "contain", 2)
-       colour := strings.Split(out[0], "bags")[0]
-       contents := LineToContents(out[1])
-       return bag{colour, contents}
+colourAndContents := SplitLine(line)
+                     colour := ExtractColour(colourAndContents[0])
+                     contents := ExtractContents(colourAndContents[1])
+                     return bag{colour, contents}
 }
 
-func LineToContents(line string) []bag {
-out := strings.Split(line, ",")
-       if out[0] == line {
-         return EmptyOrOne(out[0])
-       } else {
-         return Many(out)
-       }
+func SplitLine(line string) []string {
+  return strings.SplitN(line, "contain", 2)
 }
 
-func EmptyOrOne(str string) []bag {
-  isEmpty, _ := regexp.MatchString("no", str)
+func ExtractColour(colourStr string) string {
+  return strings.Split(colourStr, "bags")[0]
+}
+
+func ExtractContents(contentsStr string) []bag {
+contents := strings.Split(contentsStr, ",")
+            if contents[0] == contentsStr {
+              return EmptyOrOne(contents[0])
+            } else {
+              return Many(contents)
+            }
+}
+
+func EmptyOrOne(content string) []bag {
+  isEmpty, _ := regexp.MatchString("no", content)
     if isEmpty {
       return []bag{}
     } else {
-      return []bag{CreateBag(str)}
+      return []bag{CreateBag(content)}
     }
 }
 
-func Many(strs []string) []bag {
-contents := make([]bag, 0)
-            for _, s := range strs {
-              contents = append(contents, CreateBag(s))
-            }
-          return contents
+func Many(contents []string) []bag {
+contentsAsBags := make([]bag, 0)
+                  for _, content := range contents {
+                    contentsAsBags = append(contentsAsBags, CreateBag(content))
+                  }
+                return contentsAsBags
 }
 
-func CreateBag(str string) bag {
-col := strings.SplitN(str, "bag", 2)
-       return bag{col[0], []bag{}}
+func CreateBag(content string) bag {
+colour := strings.SplitN(content, "bag", 2)[0]
+          return bag{colour, []bag{}}
+}
+
+func NumCarriers(bags []bag, bagToCheck string) int {
+  return len(Carriers(bags, bagToCheck))
+}
+
+func Carriers(bags []bag, bagToCheck string) map[string]struct{} {
+setBagsWhichEventuallyContainBagToCheck := make(map[string]struct{})
+                                             setBagsWhichDirectlyContainBagToCheck := make(map[string]struct{})
+                                             for _, bag := range bags {
+                                               if ContentsIncludesBagToCheck(bag.contents, bagToCheck) {
+                                                 AddToSets(bag.colour, setBagsWhichEventuallyContainBagToCheck, setBagsWhichDirectlyContainBagToCheck)
+                                               }
+                                             }
+                                           for bag := range setBagsWhichDirectlyContainBagToCheck {
+bagsToAdd := Carriers(bags, bag)
+keys := ExtractKeys(bagsToAdd)
+AddAllToSet(setBagsWhichEventuallyContainBagToCheck, keys)
+                                           }
+                                           return setBagsWhichEventuallyContainBagToCheck
+}
+
+func ContentsIncludesBagToCheck(bags []bag, bagToCheck string) bool {
+  for _, bag := range bags {
+    containsBagToCheck, _ := regexp.MatchString(bagToCheck, bag.colour)
+      if containsBagToCheck {
+        return true
+      }
+  }
+  return false
+}
+
+func AddToSets(entry string, sets ...map[string]struct{}) {
+  for _, set := range sets {
+    set[entry] = struct{}{}
+  }
+}
+
+func ExtractKeys(inputMap map[string]struct{}) []string {
+  keys := make([]string, 0, len(inputMap))
+  for key := range inputMap {
+    keys = append(keys, key)
+  }
+  return keys
+}
+
+
+func AddAllToSet(set map[string]struct{}, entries []string) {
+  for _, entry := range entries {
+    set[entry] = struct{}{}
+  }
 }
 
 type bag struct {
