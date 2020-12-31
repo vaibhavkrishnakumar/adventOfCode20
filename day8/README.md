@@ -1,5 +1,5 @@
 # Day 8: Handheld Halting
 ```
-kotlin solution.kt
+kotlinc solution.kt
 kotlin SolutionKt
 ```
